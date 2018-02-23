@@ -33,15 +33,4 @@ data:
               {lager_file_backend, [{file, "console.log"}, {level, info}]}
              ]}
        ]}
-    ]
-
-  sys.config: | 
-    ["/etc/ergw-gtp-u-edp/ergw-gtp-u-edp.config"].
-
-  vm.args: | 
-    -sname ergw-gtp-u-edp
-    
-    -setcookie ergw-gtp-secret-cookie
-    
-    +K true
-    +A30
+    ].

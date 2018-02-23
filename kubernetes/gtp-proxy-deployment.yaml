@@ -19,12 +19,12 @@ spec:
         image: ergw/ergw-gtp-u-edp
         volumeMounts:
         - name: gtp-u-edp-config
-          mountPath: /config/       
+          mountPath: /etc/ergw-gtp-u-edp/
       - name: ergw-c-node
         image: ergw/ergw-gtp-c-node
         volumeMounts:
         - name: gtp-c-node-config
-          mountPath: /config/
+          mountPath: /etc/ergw-gtp-c-node/
       volumes:
       - name: gtp-u-edp-config
         configMap:
