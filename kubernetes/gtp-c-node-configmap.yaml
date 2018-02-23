@@ -4,85 +4,75 @@ metadata:
   name: gtp-c-node-configmap
 data:
   ergw-gtp-c-node.config: |
-    [{setup, [{data_dir, "/var/lib/ergw"},
-        {log_dir,  "/var/log/gtp-c-node"}      %% NOTE: lager is not using this
-       ]},
-    
-     {ergw, [{sockets,
-          [{irx, [{type, 'gtp-c'},
-              {ip,  {127,0,0,1}},
-              {netdev, "grx"},
-              freebind
+
+    [
+     {setup, [{data_dir, "/var/lib/ergw"},
+              {log_dir,  "/var/log/gtphub-c-node"}                             %% NOTE: lager is not using this
              ]},
-           {grx, [{type, 'gtp-u'},
-              {node, 'ergw-gtp-u-edp@gtp-proxy'},
-              {name, 'grx'}]}
-          ]},
     
-         {vrfs,
-          [{upstream, [{pools,  [{{10, 180, 0, 1}, {10, 180, 255, 254}, 32},
-                                 {{16#8001, 0, 0, 0, 0, 0, 0, 0}, {16#8001, 0, 0, 16#FFFF, 0, 0, 0, 0}, 64}
-                                ]},
-                       {'MS-Primary-DNS-Server', {8,8,8,8}},
-                       {'MS-Secondary-DNS-Server', {8,8,4,4}},
-                       {'MS-Primary-NBNS-Server', {127,0,0,1}},
-                       {'MS-Secondary-NBNS-Server', {127,0,0,1}}
-                  ]}
-          ]},
+     {'ergw-gtp-c-node', []},
     
-         {handlers,
-          [{'h1', [{handler, pgw_s5s8},
-             {protocol, gn},
-             {sockets, [irx]},
-             {data_paths, [grx]},
-             {aaa, [{'Username',
-               [{default, ['IMSI', <<"@">>, 'APN']}]}]}
+     {ergw, [
+             {sockets,
+              [{'irx-1', [{type, 'gtp-c'},
+                          {ip,  {127,0,0,1}},
+                          {netdev, "lo"},
+                          freebind
+                         ]},
+               {'grx-1', [{type, 'gtp-u'},
+                          {node, 'ergw-gtp-u-edp@gtp-proxy'},
+                          {name, 'grx-1'}
+                         ]}
+              ]},
+    
+             {proxy_lb_type, random},
+    
+             {http_api, [{port, 8000}, {ip, {127, 0, 0, 1}}]},
+    
+             {handlers,
+              [{h1,   [{handler, pgw_s5s8_proxy},
+                       {protocol, gn},
+                       {sockets, ['irx-1']},
+                       {data_paths, ['grx-1']},
+                       {proxy_sockets, ['irx-1']},
+                       {proxy_data_paths, ['grx-1']},
+                       {pgw, {172,0,0,1}}
+                      ]},
+               {h2, [{handler, pgw_s5s8_proxy},
+                       {protocol, s5s8},
+                       {sockets, ['irx-1']},
+                       {data_paths, ['grx-1']},
+                       {proxy_sockets, ['irx-1']},
+                       {proxy_data_paths, ['grx-1']},
+                       {pgw, {127,0,0,1}}
+                      ]}
+              ]}
             ]},
-           {'h2', [{handler, pgw_s5s8},
-             {protocol, s5s8},
-             {sockets, [irx]},
-             {data_paths, [grx]}
-            ]}
-          ]},
     
-         {apns,
-          [{[<<"apn01">>,<<"example">>,<<"net">>], [{vrf, upstream}]},
-           {[<<"apn02">>,<<"example">>,<<"net">>], [{vrf, upstream}]}
-          ]},
-    
-         {http_api, [{port, 8000}, {ip, {127, 0, 0, 1}}]}
-        ]},
-    
+
      {ergw_aaa, [
-              {ergw_aaa_provider, {ergw_aaa_mock, [{shared_secret, <<"MySecret">>}]}}
-              %% {ergw_aaa_provider,
-              %%  {ergw_aaa_radius,
-              %%   [{nas_identifier,<<"nas_id">>},
-              %%    {radius_auth_server,{{127,0,0,1},1812,<<"secret">>}},
-              %%    {radius_acct_server,{{127,0,0,1},1813,<<"secret">>}}
-              %%   ]}
-              %% }
-            ]},
-    
+                 {ergw_aaa_provider, {ergw_aaa_mock, [{shared_secret, <<"MySecret">>}]}}
+                ]},
+
+
      {jobs, [{queues,
-        [{path_restart,
-          [{path_restart, [{standard_counter, 100}]},
-           {create, [{standard_rate, 100}, {max_size, 10}]},
-           {delete, [{standard_counter, 100}]},
-           {other, [{standard_rate, 100}, {max_size, 10}]}
-          ]}
-        ]}
-      ]},
-    
+              [{path_restart, [{standard_counter, 100}]},
+               {create, [{standard_rate, 100}, {max_size, 10}]},
+               {delete, [{standard_counter, 100}]},
+               {other, [{standard_rate, 100}, {max_size, 10}]}
+              ]}
+            ]},
+
+
      {lager, [
-         {colored, true},
-         {log_root, "/var/log/gtp-c-node"},
-         {error_logger_redirect, true},
-         {crash_log, "crash.log"},
-         {handlers, [
-                 {lager_console_backend, debug},
-                 {lager_file_backend, [{file, "error.log"}, {level, error}]},
-                 {lager_file_backend, [{file, "console.log"}, {level, debug}]}
-                ]}
-        ]}
+              {log_root, "/var/log/gtphub-c-node"},
+              {error_logger_redirect, true},
+              {colored, true},
+              {crash_log, "crash.log"},
+              {handlers, [
+                          {lager_console_backend, debug},
+                          {lager_file_backend, [{file, "error.log"}, {level, error}]},
+                          {lager_file_backend, [{file, "console.log"}, {level, info}]}
+                         ]}
+             ]}
     ].

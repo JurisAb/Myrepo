@@ -9,18 +9,12 @@ data:
              ]},
     
      {gtp_u_edp, [
-             {sockets, [{grx, [{ip, {127,0,0,1}},
-             {netdev, "lo"},
-             freebind
-             %% {netns, "/var/run/netns/grx"}
-            ]},
-            {'proxy-grx', [{ip,  {127,0,0,2}},
-               {netdev, "lo"},
-               freebind
-               %% {netns, "/var/run/netns/proxy"}
-              ]}
-           ]}
-            ]},
+                  {sockets, [{'grx-1', [{ip, {172,0,0,1}},
+                                        {netdev, "net0"},
+                                        freebind
+                                       ]}
+                            ]}
+                 ]},
     
      {lager, [
         {colored, true},
