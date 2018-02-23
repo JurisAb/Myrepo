@@ -1,17 +1,43 @@
 ﻿apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: gtp-c-node-configmap
+  name: gtp-proxy
 data:
-  ergw-gtp-c-node.config: |
+  ergw-gtp-u-edp.config: |
+    [{setup, [{data_dir, "/var/lib/ergw"},
+              {log_dir,  "/var/log/gtp-u-node"}                             %% NOTE: lager is not using this
+             ]},
 
+     {gtp_u_edp, [
+                  {sockets, [{'grx-1', [{ip, {172,0,0,1}},
+                                        {netdev, "lo"},
+                                        freebind
+                                       ]}
+                            ]}
+                 ]},
+
+     {lager, [
+        {colored, true},
+        {log_root, "/var/log/gtp-u-node "},
+        {error_logger_redirect, true},
+        {crash_log, "crash.log"},
+        {handlers, [
+              {lager_console_backend, debug},
+              {lager_file_backend, [{file, "error.log"}, {level, error}]},
+              {lager_file_backend, [{file, "console.log"}, {level, info}]}
+             ]}
+       ]}
+    ].
+
+
+  ergw-gtp-c-node.config: |
     [
      {setup, [{data_dir, "/var/lib/ergw"},
               {log_dir,  "/var/log/gtphub-c-node"}                             %% NOTE: lager is not using this
              ]},
-    
+
      {'ergw-gtp-c-node', []},
-    
+
      {ergw, [
              {sockets,
               [{'irx-1', [{type, 'gtp-c'},

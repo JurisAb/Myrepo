@@ -22,14 +22,20 @@ spec:
         - name: gtp-u-edp-config
           mountPath: /etc/ergw-gtp-u-edp/
       - name: ergw-c-node
-        image: ergw/ergw-gtp-c-node
+        image: ergw/ergw-gtp-c-node:master
         volumeMounts:
         - name: gtp-c-node-config
           mountPath: /etc/ergw-gtp-c-node/
       volumes:
       - name: gtp-u-edp-config
         configMap:
-          name: gtp-u-edp-configmap
+          name: gtp-proxy
+          items:
+          - key: ergw-gtp-u-edp.config
+            path: ergw-gtp-u-edp.config
       - name: gtp-c-node-config
         configMap:
-          name: gtp-c-node-configmap
+          name: gtp-proxy
+          items:
+          - key: ergw-gtp-c-node.config
+            path: ergw-gtp-c-node.config
