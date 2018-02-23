@@ -1,7 +1,12 @@
 ﻿apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: gtp-proxy
+  name: {{ template "gtp-proxy.fullname" . }}
+  labels:
+    app: {{ template "gtp-proxy.name" . }}
+    chart: {{ template "gtp-proxy.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 data:
   ergw-gtp-u-edp.config: |
     [{setup, [{data_dir, "/var/lib/ergw"},
@@ -9,8 +14,8 @@ data:
              ]},
 
      {gtp_u_edp, [
-                  {sockets, [{'grx-1', [{ip, {172,0,0,1}},
-                                        {netdev, "lo"},
+                  {sockets, [{'grx-1', [{ip, {{ template "to.erlang.ip" .Values.listen.ipAddr -}} },
+                                        {netdev, "{{ .Values.listen.interface }}"},
                                         freebind
                                        ]}
                             ]}
@@ -41,20 +46,20 @@ data:
      {ergw, [
              {sockets,
               [{'irx-1', [{type, 'gtp-c'},
-                          {ip,  {127,0,0,1}},
-                          {netdev, "lo"},
+                          {ip, {{ template "to.erlang.ip" .Values.listen.ipAddr -}} },
+                          {netdev, "{{ .Values.listen.interface }}"},
                           freebind
                          ]},
                {'grx-1', [{type, 'gtp-u'},
-                          {node, 'ergw-gtp-u-edp@gtp-proxy'},
+                          {node, 'ergw-gtp-u-edp@{{ template "gtp-proxy.fullname" . }}'},
                           {name, 'grx-1'}
                          ]}
               ]},
-    
+
              {proxy_lb_type, random},
-    
-             {http_api, [{port, 8000}, {ip, {127, 0, 0, 1}}]},
-    
+
+             {http_api, [{port, {{ .Values.httpApi.port }}}, {ip, {{template "to.erlang.ip" .Values.httpApi.ipAddr }}}]},
+
              {handlers,
               [{h1,   [{handler, pgw_s5s8_proxy},
                        {protocol, gn},
@@ -62,7 +67,7 @@ data:
                        {data_paths, ['grx-1']},
                        {proxy_sockets, ['irx-1']},
                        {proxy_data_paths, ['grx-1']},
-                       {pgw, {172,0,0,1}}
+                       {pgw, {{ template "to.erlang.ip" .Values.pgw.ipAddr }}}
                       ]},
                {h2, [{handler, pgw_s5s8_proxy},
                        {protocol, s5s8},
@@ -70,11 +75,10 @@ data:
                        {data_paths, ['grx-1']},
                        {proxy_sockets, ['irx-1']},
                        {proxy_data_paths, ['grx-1']},
-                       {pgw, {127,0,0,1}}
+                       {pgw, {{ template "to.erlang.ip" .Values.pgw.ipAddr }}}
                       ]}
               ]}
             ]},
-    
 
      {ergw_aaa, [
                  {ergw_aaa_provider, {ergw_aaa_mock, [{shared_secret, <<"MySecret">>}]}}
