@@ -21,6 +21,7 @@ dpNode:
   image: ergw/ergw-gtp-u-edp
   imagePullPolicy: Always
 
+logLevel: debug
 
 nodeSelector: {}
 

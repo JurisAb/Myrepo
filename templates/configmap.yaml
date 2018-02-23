@@ -27,9 +27,7 @@ data:
         {error_logger_redirect, true},
         {crash_log, "crash.log"},
         {handlers, [
-              {lager_console_backend, debug},
-              {lager_file_backend, [{file, "error.log"}, {level, error}]},
-              {lager_file_backend, [{file, "console.log"}, {level, info}]}
+              {lager_console_backend, {{ .Values.logLevel }}}
              ]}
        ]}
     ].
@@ -100,9 +98,7 @@ data:
               {colored, true},
               {crash_log, "crash.log"},
               {handlers, [
-                          {lager_console_backend, debug},
-                          {lager_file_backend, [{file, "error.log"}, {level, error}]},
-                          {lager_file_backend, [{file, "console.log"}, {level, info}]}
+                          {lager_console_backend, {{ .Values.logLevel }}}
                          ]}
              ]}
     ].
