@@ -14,6 +14,7 @@ spec:
       labels:
         app: gtp-proxy
     spec:
+      hostname: gtp-proxy
       containers:
       - name: ergw-u-edp
         image: ergw/ergw-gtp-u-edp

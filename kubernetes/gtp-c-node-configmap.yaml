@@ -15,7 +15,7 @@ data:
               freebind
              ]},
            {grx, [{type, 'gtp-u'},
-              {node, 'pgw-u-node@pgw-u-host'},
+              {node, 'ergw-gtp-u-edp@gtp-proxy'},
               {name, 'grx'}]}
           ]},
     
