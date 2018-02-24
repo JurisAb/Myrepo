@@ -1,0 +1,27 @@
+stages:
+  - build
+  - push
+
+build_packages:
+  stage: build
+  image: lachlanevenson/k8s-helm
+  before_script:
+    - helm init -c
+    - helm repo add tp $CHART_REPO
+  script:
+    - helm package -u .
+  artifacts:
+    paths:
+      - ./*.tgz
+    expire_in: 7 day
+
+push_to_repo:
+  dependencies:
+    - build_packages
+  stage: push
+  when: manual
+  image: alpine
+  before_script:
+    - apk update && apk add curl
+  script:
+    - 'pkg=$(ls *.tgz) ; curl --data-binary "@${pkg}" $CHART_REPO/api/charts'
