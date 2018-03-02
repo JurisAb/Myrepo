@@ -36,6 +36,23 @@ spec:
           capabilities:
             add: ["NET_ADMIN"]
       {{- end }}
+      {{- if .Values.initConfig }}
+      - name: init-config
+        image: alpine
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          echo "Initializing..."
+          set -x
+          {{- range .Values.initConfig }}
+          {{ . }}
+          {{- end }}
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+      {{- end }}
       containers:
       {{- if .Values.vxlanController.enabled }}
         - name: vxlan-controller-agent
