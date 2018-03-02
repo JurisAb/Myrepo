@@ -23,6 +23,10 @@ dpNode:
 
 logLevel: debug
 
+vxlanController:
+  enabled: false
+  vxlan: lan0
+
 nodeSelector: {}
 
 tolerations: []
