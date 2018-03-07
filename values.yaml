@@ -6,6 +6,10 @@ listen:
   interface: lo
   ipAddr: 127.0.0.1
 
+proxySocket:
+  interface: lo
+  ipAddr: 127.0.0.2
+
 pgw:
   ipAddr: 127.0.0.1
 
