@@ -2,13 +2,15 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-listen:
+access:
   interface: lo
-  ipAddr: 127.0.0.1
+  ipAddr: 127.0.0.1/24
+  gateway: 127.0.0.1
 
-proxySocket:
+core:
   interface: lo
-  ipAddr: 127.0.0.2
+  ipAddr: 127.0.0.2/24
+  gateway: 127.0.0.2
 
 pgw:
   ipAddr: 127.0.0.1
@@ -31,9 +33,13 @@ vxlanController:
   enabled: false
   vxlan: lan0
 
-initConfig: {}
-# - ip a add 192.168.12.10/24
-# - ip r add 192.168.77.0/24 via 192.168.12.1
+preInitConfig: {}
+# - ip a add 172.18.7.86/24 dev core0
+# - ip r add 192.168.7.0/24 via 172.18.7.1
+
+postInitConfig: {}
+# - ip a add 172.18.7.86/24 dev core0
+# - ip r add 192.168.7.0/24 via 172.18.7.1
 
 nodeSelector: {}
 

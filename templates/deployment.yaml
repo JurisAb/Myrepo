@@ -36,23 +36,45 @@ spec:
           capabilities:
             add: ["NET_ADMIN"]
       {{- end }}
-      {{- if .Values.initConfig }}
       - name: init-config
-        image: alpine
+        image: travelping/nettools
         command: ["/bin/sh"]
         args:
         - -c
         - |
-          echo "Initializing..."
+          echo "Pre Initializing..."
           set -x
-          {{- range .Values.initConfig }}
+
+          {{- range .Values.preInitConfig }}
+          {{ . }}
+          {{- end }}
+
+          echo "Initializing..."
+          ip l add acc0 type vrf table 10
+          ip l set acc0 up
+          ip ru add oif acc0 table 10
+          ip ru add iif acc0 table 10
+          ip l set dev {{ .Values.access.interface }} master acc0
+          ip a add {{ .Values.access.ipAddr }} dev {{ .Values.access.interface }}
+          ip r add table 10 default via {{ .Values.access.gateway }}
+
+          ip l add core0 type vrf table 20
+          ip l set core0 up
+          ip ru add oif core0 table 20
+          ip ru add iif core0 table 20
+          ip l set dev {{ .Values.core.interface }} master core0
+          ip a add {{ .Values.core.ipAddr }} dev {{ .Values.core.interface }}
+          ip r add table 20 default via {{ .Values.core.gateway }}
+
+          echo "Additional config..."
+
+          {{- range .Values.postInitConfig }}
           {{ . }}
           {{- end }}
         securityContext:
           capabilities:
             add:
             - NET_ADMIN
-      {{- end }}
       containers:
       {{- if .Values.vxlanController.enabled }}
         - name: vxlan-controller-agent

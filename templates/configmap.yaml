@@ -14,12 +14,12 @@ data:
              ]},
 
      {gtp_u_edp, [
-                  {sockets, [{'grx-0', [{ip, {{ template "to.erlang.ip" .Values.listen.ipAddr -}} },
-                                        {netdev, "{{ .Values.listen.interface }}"},
+                  {sockets, [{'grx-0', [{ip, {{ splitList "/" .Values.access.ipAddr | first | include "to.erlang.ip" -}} },
+                                        {netdev, "acc0"},
                                         freebind
                                        ]},
-                             {'grx-1', [{ip, {{ template "to.erlang.ip" .Values.proxySocket.ipAddr -}} },
-                                        {netdev, "{{ .Values.proxySocket.interface }}"},
+                             {'grx-1', [{ip, {{ splitList "/" .Values.core.ipAddr | first | include "to.erlang.ip" -}} },
+                                        {netdev, "core0"},
                                         freebind
                                        ]}
                             ]}
@@ -48,8 +48,8 @@ data:
      {ergw, [
              {sockets,
               [{'irx-0', [{type, 'gtp-c'},
-                          {ip, {{ template "to.erlang.ip" .Values.listen.ipAddr -}} },
-                          {netdev, "{{ .Values.listen.interface }}"},
+                          {ip, {{ splitList "/" .Values.access.ipAddr | first | include "to.erlang.ip" -}} },
+                          {netdev, "acc0"},
                           freebind
                          ]},
                {'grx-0', [{type, 'gtp-u'},
@@ -57,8 +57,8 @@ data:
                           {name, 'grx-0'}
                          ]},
                {'irx-1', [{type, 'gtp-c'},
-                          {ip, {{ template "to.erlang.ip" .Values.proxySocket.ipAddr -}} },
-                          {netdev, "{{ .Values.proxySocket.interface }}"},
+                          {ip, {{ splitList "/" .Values.core.ipAddr | first | include "to.erlang.ip" -}} },
+                          {netdev, "core0"},
                           freebind
                          ]},
                {'grx-1', [{type, 'gtp-u'},
