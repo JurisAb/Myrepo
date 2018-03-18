@@ -30,7 +30,7 @@ spec:
       initContainers:
       {{- if .Values.vxlanController.enabled }}
       - name: vxlan-controller-agent-init
-        image: aialferov/kube-vxlan-controller-agent
+        image: aialferov/kube-vxlan-controller-agent:2.0.0
         command: ["kube-vxlan-controller-agent-init"]
         securityContext:
           capabilities:
@@ -78,7 +78,7 @@ spec:
       containers:
       {{- if .Values.vxlanController.enabled }}
         - name: vxlan-controller-agent
-          image: aialferov/kube-vxlan-controller-agent
+          image: aialferov/kube-vxlan-controller-agent:2.0.0
           securityContext:
             capabilities:
               add:
