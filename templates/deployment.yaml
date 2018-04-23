@@ -77,7 +77,7 @@ spec:
       containers:
       {{- if .Values.vxlanController.enabled }}
         - name: vxlan-controller-agent
-          image: aialferov/kube-vxlan-controller-agent:2.0.0
+          image: aialferov/kube-vxlan-controller-agent:2.1.0
           securityContext:
             capabilities:
               add:
