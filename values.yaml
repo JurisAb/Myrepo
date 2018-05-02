@@ -3,17 +3,17 @@
 # Declare variables to be passed into your templates.
 
 access:
-  interface: lo
-  ipAddr: 127.0.0.1/24
-  gateway: 127.0.0.1
+  interface: lo1
+  ipAddr: 198.18.1.2/24
+  gateway: 198.18.1.1
 
 core:
-  interface: lo
-  ipAddr: 127.0.0.2/24
-  gateway: 127.0.0.2
+  interface: lo2
+  ipAddr: 198.18.2.2/24
+  gateway: 198.18.2.1
 
 pgw:
-  ipAddr: 127.0.0.1
+  ipAddr: 198.18.3.10
 
 httpApi:
   ipAddr: 0.0.0.0
@@ -34,8 +34,10 @@ vxlanController:
   vxlan: lan0
 
 preInitConfig: {}
-# - ip a add 172.18.7.86/24 dev core0
-# - ip r add 192.168.7.0/24 via 172.18.7.1
+# - ip l add lo1 type dummy
+# - ip l set lo1 up
+# - ip l add lo2 type dummy
+# - ip l set lo2 up
 
 postInitConfig: {}
 # - ip a add 172.18.7.86/24 dev core0
