@@ -42,7 +42,7 @@ spec:
         - -c
         - |
           echo "Pre Initializing..."
-          set -x
+          set -xe
 
           {{- range .Values.preInitConfig }}
           {{ . }}
