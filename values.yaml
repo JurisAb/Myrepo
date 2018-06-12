@@ -33,6 +33,13 @@ vxlanController:
   enabled: false
   vxlan: lan0
 
+pcap:
+  image: travelping/pcap:latest
+  imagePullPolicy: Always
+  interface: acc0
+  enabled: false
+  filter: udp port 2123 or icmp
+
 preInitConfig: {}
 # - ip l add lo1 type dummy
 # - ip l set lo1 up
