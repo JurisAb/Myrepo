@@ -48,3 +48,10 @@ The following table lists the configurable parameters of the MariaDB chart and t
 | `pgw.ipAddr`                | IP address of the target PGW               | `127.0.0.1`                                 |
 | `logLevel`                  | Log verbosity level                        | `debug`                                     |
 
+The following table lists the configurable parameters of the tcpdump sidecar container and their default values.
+
+|          Parameter          |                Description                 |                   Default                   |
+| --------------------------- | ------------------------------------------ | ------------------------------------------- |
+| `Values.pcap.enabled`       | Enables/Disables container.                | `false`                                     |
+| `Values.pcap.interface:   ` | Interface to monitor.                      | `acc0`                                      |
+| `Values.pcap.filter`        | tcpdump options                            | `udp port 2123 or icmp`                     |
