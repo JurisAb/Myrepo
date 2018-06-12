@@ -75,6 +75,17 @@ spec:
             add:
             - NET_ADMIN
       containers:
+      {{- if .Values.pcap.enabled }}
+        - name: pcap
+          image: "{{ .Values.pcap.image }}"
+          imagePullPolicy: "{{ .Values.pcap.imagePullPolicy }}"
+          command: ["/bin/sh"]
+          args:
+          - -c
+          - |
+            echo "Capturing Packets to /data/dump."
+            /usr/sbin/tcpdump -C 1000 -W 10 -v -w /data/dump -i {{ .Values.pcap.interface }} {{ .Values.pcap.filter }}
+      {{- end }}
       {{- if .Values.vxlanController.enabled }}
         - name: vxlan-controller-agent
           image: aialferov/kube-vxlan-controller-agent:2.1.0
@@ -108,6 +119,7 @@ spec:
           items:
           - key: ergw-gtp-c-node.config
             path: ergw-gtp-c-node.config
+
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
