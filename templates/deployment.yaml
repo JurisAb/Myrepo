@@ -78,13 +78,16 @@ spec:
       {{- if .Values.pcap.enabled }}
         - name: pcap
           image: "{{ .Values.pcap.image }}"
+          env:
+          - name: FILTER
+            value: "{{ .Values.pcap.filter }}"
+          - name: IFACE
+            value: "{{ .Values.pcap.interface }}"
+          - name: MAXFILESIZE
+            value: "{{ .Values.pcap.maxfilesize }}"
+          - name: MAXEFILENUM
+            value: "{{ .Values.pcap.maxfilenum }}"
           imagePullPolicy: "{{ .Values.pcap.imagePullPolicy }}"
-          command: ["/bin/sh"]
-          args:
-          - -c
-          - |
-            echo "Capturing Packets to /data/dump."
-            /usr/sbin/tcpdump -C 1000 -W 10 -v -w /data/dump -i {{ .Values.pcap.interface }} {{ .Values.pcap.filter }}
       {{- end }}
       {{- if .Values.vxlanController.enabled }}
         - name: vxlan-controller-agent
