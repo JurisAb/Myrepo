@@ -34,7 +34,7 @@ vxlanController:
   vxlan: lan0
 
 pcap:
-  image: travelping/pcap:latest
+  image: travelping/pcap:v0.1
   imagePullPolicy: Always
   interface: acc0
   enabled: false
