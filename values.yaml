@@ -33,6 +33,15 @@ vxlanController:
   enabled: false
   vxlan: lan0
 
+pcap:
+  image: travelping/pcap:v0.1
+  imagePullPolicy: Always
+  interface: acc0
+  enabled: false
+  filter: udp port 2123 or icmp
+  maxfilesize: 1000
+  maxfilenum: 10
+
 preInitConfig: {}
 # - ip l add lo1 type dummy
 # - ip l set lo1 up

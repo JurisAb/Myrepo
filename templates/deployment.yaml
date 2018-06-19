@@ -75,6 +75,20 @@ spec:
             add:
             - NET_ADMIN
       containers:
+      {{- if .Values.pcap.enabled }}
+        - name: pcap
+          image: "{{ .Values.pcap.image }}"
+          env:
+          - name: FILTER
+            value: "{{ .Values.pcap.filter }}"
+          - name: IFACE
+            value: "{{ .Values.pcap.interface }}"
+          - name: MAXFILESIZE
+            value: "{{ .Values.pcap.maxfilesize }}"
+          - name: MAXEFILENUM
+            value: "{{ .Values.pcap.maxfilenum }}"
+          imagePullPolicy: "{{ .Values.pcap.imagePullPolicy }}"
+      {{- end }}
       {{- if .Values.vxlanController.enabled }}
         - name: vxlan-controller-agent
           image: aialferov/kube-vxlan-controller-agent:2.1.0
