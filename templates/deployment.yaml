@@ -75,6 +75,14 @@ spec:
             add:
             - NET_ADMIN
       containers:
+      {{- if .Values.vxlanController.enabled }}
+        - name: vxlan-controller-agent
+          image: aialferov/kube-vxlan-controller-agent:2.1.0
+          securityContext:
+            capabilities:
+              add:
+              - NET_ADMIN
+      {{- end }}
       {{- if .Values.pcap.enabled }}
         - name: pcap
           image: "{{ .Values.pcap.image }}"
@@ -88,14 +96,6 @@ spec:
           - name: MAXEFILENUM
             value: "{{ .Values.pcap.maxfilenum }}"
           imagePullPolicy: "{{ .Values.pcap.imagePullPolicy }}"
-      {{- end }}
-      {{- if .Values.vxlanController.enabled }}
-        - name: vxlan-controller-agent
-          image: aialferov/kube-vxlan-controller-agent:2.1.0
-          securityContext:
-            capabilities:
-              add:
-              - NET_ADMIN
       {{- end }}
         - name: ergw-u-edp
           image: "{{ .Values.dpNode.image }}"
