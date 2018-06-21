@@ -55,5 +55,5 @@ The following table lists the configurable parameters of the tcpdump sidecar con
 | `Values.pcap.enabled`       | Enables/Disables container.                | `false`                                     |
 | `Values.pcap.interface:   ` | Interface to monitor.                      | `acc0`                                      |
 | `Values.pcap.filter`        | tcpdump options                            | `udp port 2123 or icmp`                     |
-| `Values.pcap.maxfilesize: ` | Max size before a new file is opened.      | `1000`                                      |
+| `Values.pcap.maxfilesize: ` | Max size in MB before a new file is opened.| `100`                                       |
 | `Values.pcap.maxfilenum`    | Max number of files before overwriting     | `10`                                        |

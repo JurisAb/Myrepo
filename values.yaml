@@ -39,7 +39,7 @@ pcap:
   interface: acc0
   enabled: false
   filter: udp port 2123 or icmp
-  maxfilesize: 1000
+  maxfilesize: 100
   maxfilenum: 10
 
 preInitConfig: {}
