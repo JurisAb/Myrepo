@@ -1,4 +1,4 @@
-## 1.x.y
+## Chart 1.1.0 / App 1.1.0
 
 ### Operational Changes
 
@@ -20,7 +20,7 @@ pgw:
 ```
 
 
-### Changes since 1.0.3
+### Changes since 1.0.0
 
 
 - Maintenance update of underlying libraries
