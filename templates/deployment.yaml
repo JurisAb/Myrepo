@@ -103,12 +103,20 @@ spec:
           volumeMounts:
           - name: gtp-u-edp-config
             mountPath: /etc/ergw-gtp-u-edp/
+          {{- with .Values.dpNode.env }}
+          env:
+{{ toYaml . | indent 10 }}
+          {{- end }}
         - name: ergw-c-node
           image: "{{ .Values.cpNode.image }}"
           imagePullPolicy: "{{ .Values.cpNode.imagePullPolicy }}"
           volumeMounts:
           - name: gtp-c-node-config
             mountPath: /etc/ergw-gtp-c-node/
+          {{- with .Values.cpNode.env }}
+          env:
+{{ toYaml . | indent 10 }}
+          {{- end }}
       volumes:
       - name: gtp-u-edp-config
         configMap:
