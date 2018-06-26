@@ -20,11 +20,11 @@ httpApi:
   port: 8000
 
 cpNode:
-  image: ergw/ergw-gtp-c-node:1.16.1
+  image: ergw/ergw-gtp-c-node:1.18.0
   imagePullPolicy: Always
 
 dpNode:
-  image: ergw/ergw-gtp-u-edp:1.5.0
+  image: ergw/ergw-gtp-u-edp:1.6.0
   imagePullPolicy: Always
 
 logLevel: debug
