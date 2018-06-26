@@ -13,7 +13,10 @@ core:
   gateway: 198.18.2.1
 
 pgw:
-  ipAddr: 198.18.3.10
+  ipAddr:
+    - 198.18.3.10
+    - 198.18.3.11
+  lbAlgorithm: random
 
 httpApi:
   ipAddr: 0.0.0.0

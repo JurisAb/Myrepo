@@ -68,7 +68,7 @@ data:
 
               ]},
 
-             {proxy_lb_type, random},
+             {proxy_lb_type, {{ .Values.pgw.lbAlgorithm }}},
 
              {http_api, [{port, {{ .Values.httpApi.port }}}, {ip, {{template "to.erlang.ip" .Values.httpApi.ipAddr }}}]},
 
@@ -79,7 +79,11 @@ data:
                        {data_paths, ['grx-0']},
                        {proxy_sockets, ['irx-1']},
                        {proxy_data_paths, ['grx-1']},
+                       {{- if kindIs "string" .Values.pgw.ipAddr }}
                        {pgw, {{ template "to.erlang.ip" .Values.pgw.ipAddr }}}
+                       {{- else }}
+                       {pgw, {{ template "to.erlang.ip_list" .Values.pgw.ipAddr }}}
+                       {{- end}}
                       ]},
                {h2, [{handler, pgw_s5s8_proxy},
                        {protocol, s5s8},
@@ -87,7 +91,11 @@ data:
                        {data_paths, ['grx-0']},
                        {proxy_sockets, ['irx-1']},
                        {proxy_data_paths, ['grx-1']},
+                       {{- if kindIs "string" .Values.pgw.ipAddr }}
                        {pgw, {{ template "to.erlang.ip" .Values.pgw.ipAddr }}}
+                       {{- else }}
+                       {pgw, {{ template "to.erlang.ip_list" .Values.pgw.ipAddr }}}
+                       {{- end}}
                       ]}
               ]}
             ]},

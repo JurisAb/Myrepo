@@ -45,7 +45,7 @@ The following table lists the configurable parameters of the MariaDB chart and t
 | --------------------------- | ------------------------------------------ | ------------------------------------------- |
 | `listen.interface`          | Listen interface                           | `lo`                                        |
 | `listen.ipAddr`             | IP address to bind                         | `127.0.0.1`                                 |
-| `pgw.ipAddr`                | IP address of the target PGW               | `127.0.0.1`                                 |
+| `pgw.ipAddr`                | List of IP addresses of the target PGWs    | `[198.18.3.10, 198.18.3.11]`                |
 | `logLevel`                  | Log verbosity level                        | `debug`                                     |
 
 The following table lists the configurable parameters of the tcpdump sidecar container and their default values.
