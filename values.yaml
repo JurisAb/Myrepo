@@ -32,6 +32,12 @@ logLevel: debug
 vxlanController:
   enabled: false
   vxlan: lan0
+  
+service:
+  enabled: true
+  httpApiPort: 80
+  annotations:
+    prometheus.io/scrape: "true"
 
 preInitConfig: {}
 # - ip l add lo1 type dummy

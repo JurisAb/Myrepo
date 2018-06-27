@@ -1,0 +1,24 @@
+{{- if .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+{{- if .Values.service.annotations }}
+  annotations:
+{{ toYaml .Values.service.annotations | indent 4 }}
+{{- end }}
+  name: {{ template "gtp-proxy.fullname" . }}
+  labels:
+    app: {{ template "gtp-proxy.name" . }}
+    chart: {{ template "gtp-proxy.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.service.httpApiPort }}
+      protocol: TCP
+      targetPort: http
+  selector:
+      app: {{ template "gtp-proxy.name" . }}
+      release: {{ .Release.Name }}
+{{- end -}}
