@@ -83,12 +83,30 @@ spec:
               add:
               - NET_ADMIN
       {{- end }}
+      {{- if .Values.pcap.enabled }}
+        - name: pcap
+          image: "{{ .Values.pcap.image }}"
+          env:
+          - name: FILTER
+            value: "{{ .Values.pcap.filter }}"
+          - name: IFACE
+            value: "{{ .Values.pcap.interface }}"
+          - name: MAXFILESIZE
+            value: "{{ .Values.pcap.maxfilesize }}"
+          - name: MAXEFILENUM
+            value: "{{ .Values.pcap.maxfilenum }}"
+          imagePullPolicy: "{{ .Values.pcap.imagePullPolicy }}"
+      {{- end }}
         - name: ergw-u-edp
           image: "{{ .Values.dpNode.image }}"
           imagePullPolicy: "{{ .Values.dpNode.imagePullPolicy }}"
           volumeMounts:
           - name: gtp-u-edp-config
             mountPath: /etc/ergw-gtp-u-edp/
+          {{- with .Values.dpNode.env }}
+          env:
+{{ toYaml . | indent 10 }}
+          {{- end }}
         - name: ergw-c-node
           image: "{{ .Values.cpNode.image }}"
           imagePullPolicy: "{{ .Values.cpNode.imagePullPolicy }}"
@@ -98,6 +116,10 @@ spec:
           ports:
             - containerPort: {{ .Values.httpApi.port }}
               name: http
+          {{- with .Values.cpNode.env }}
+          env:
+{{ toYaml . | indent 10 }}
+          {{- end }}
       volumes:
       - name: gtp-u-edp-config
         configMap:

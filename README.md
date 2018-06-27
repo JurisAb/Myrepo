@@ -39,29 +39,19 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-The following table lists the configurable parameters of the MariaDB chart and their default values.
+The following table lists the configurable parameters of the GTP Proxy chart and their default values.
 
 |          Parameter          |                Description                 |                   Default                   |
 | --------------------------- | ------------------------------------------ | ------------------------------------------- |
 | `listen.interface`          | Listen interface                           | `lo`                                        |
 | `listen.ipAddr`             | IP address to bind                         | `127.0.0.1`                                 |
-| `pgw.ipAddr`                | IP address of the target PGW               | `127.0.0.1`                                 |
+| `pgw.ipAddr`                | List of IP addresses of the target PGWs    | `[198.18.3.10, 198.18.3.11]`                |
 | `logLevel`                  | Log verbosity level                        | `debug`                                     |
-
-The following table lists the configurable parameters of the tcpdump sidecar container and their default values.
-
-|          Parameter          |                Description                 |                   Default                   |
-| --------------------------- | ------------------------------------------ | ------------------------------------------- |
-| `Values.pcap.enabled`       | Enables/Disables container.                | `false`                                     |
-| `Values.pcap.interface:   ` | Interface to monitor.                      | `acc0`                                      |
-| `Values.pcap.filter`        | tcpdump options                            | `udp port 2123 or icmp`                     |
-| `Values.pcap.maxfilesize: ` | Max size before a new file is opened.      | `1000`                                      |
-| `Values.pcap.maxfilenum`    | Max number of files before overwriting     | `udp port 2123 or icmp`                     |
-
-The following table lists the configurable parameters of the prometheus service and their default values.
-
-|          Parameter          |                Description                 |                   Default                   |
-| --------------------------- | ------------------------------------------ | ------------------------------------------- |
-| `Values.service.enabled`    | Enables/Disables service.                  | `true`                                      |
-| `Values.service.httpApiPort`| Port of the service/pod.                   | `80`                                        |
-| `Values.pcap.annotations`   | Annotation                                 | `true`                                      |
+| `pcap.enabled`              | Enables/Disables container.                | `false`                                     |
+| `pcap.interface:`           | Interface to monitor.                      | `acc0`                                      |
+| `pcap.filter`               | tcpdump options                            | `udp port 2123 or icmp`                     |
+| `pcap.maxfilesize:`         | Max size in MB before a new file is opened.| `100`                                       |
+| `pcap.maxfilenum`           | Max number of files before overwriting     | `10`                                        |
+| `service.enabled`           | Expose HTTP API as service                 | `true`                                      |
+| `service.httpApiPort`       | Port of HTTP API                           | `80`                                        |
+| `service.annotations`       | Annotation added to the service            | `prometheus.io/scrape: "true"`              |

@@ -1,4 +1,3 @@
-{{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
 */}}
@@ -34,6 +33,11 @@ Create chart name and version as used by the chart label.
 {{- define "to.erlang.ip" -}}
 { {{- splitList "." . | join "," -}} }
 {{- end -}}
+
+{{/* generate erlang list out of yaml */}}
+{{- define "to.erlang.ip_list" }}
+{{- $length := len . }}[{{- range $element := initial . }}{{-  $element | include "to.erlang.ip"}},{{- end }}{{- last . | include "to.erlang.ip" }}]
+{{- end }}
 
 
 {{- define "gtp-proxy.sockets.gtp-u" -}}
@@ -87,3 +91,4 @@ Create chart name and version as used by the chart label.
 [{{- range $i, $a := initial . -}}'grx-{{ $i }}', {{ end -}}
   'grx-{{ initial . | len }}']
 {{- end -}}
+{{/* vim: set filetype=gotexttmpl: */}}

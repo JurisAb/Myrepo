@@ -13,18 +13,21 @@ core:
   gateway: 198.18.2.1
 
 pgw:
-  ipAddr: 198.18.3.10
+  ipAddr:
+    - 198.18.3.10
+    - 198.18.3.11
+  lbAlgorithm: random
 
 httpApi:
   ipAddr: 0.0.0.0
   port: 8000
 
 cpNode:
-  image: ergw/ergw-gtp-c-node
+  image: ergw/ergw-gtp-c-node:1.18.0
   imagePullPolicy: Always
 
 dpNode:
-  image: ergw/ergw-gtp-u-edp
+  image: ergw/ergw-gtp-u-edp:1.6.0
   imagePullPolicy: Always
 
 logLevel: debug
@@ -38,6 +41,15 @@ service:
   httpApiPort: 80
   annotations:
     prometheus.io/scrape: "true"
+
+pcap:
+  image: travelping/pcap:0.3
+  imagePullPolicy: Always
+  interface: acc0
+  enabled: false
+  filter: udp port 2123 or icmp
+  maxfilesize: 100
+  maxfilenum: 10
 
 preInitConfig: {}
 # - ip l add lo1 type dummy
