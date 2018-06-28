@@ -113,6 +113,9 @@ spec:
           volumeMounts:
           - name: gtp-c-node-config
             mountPath: /etc/ergw-gtp-c-node/
+          ports:
+            - containerPort: {{ .Values.httpApi.port }}
+              name: http
           {{- with .Values.cpNode.env }}
           env:
 {{ toYaml . | indent 10 }}
