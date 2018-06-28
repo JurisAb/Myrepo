@@ -12,6 +12,7 @@ set `service.enabled` to `false`.
 ### Changes since 1.1.0
 
 - add service to expose httpApi port by default and scrape metrics via prometheus
+- Fix crash on accessing HTTP API
 
 ## Chart 1.1.0 / App 1.1.0
 
