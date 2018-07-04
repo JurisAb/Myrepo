@@ -23,7 +23,7 @@ httpApi:
   port: 8000
 
 cpNode:
-  image: ergw/ergw-gtp-c-node:1.18.1
+  image: ergw/ergw-gtp-c-node:1.18.2
   imagePullPolicy: Always
 
 dpNode:
@@ -35,7 +35,7 @@ logLevel: debug
 vxlanController:
   enabled: false
   vxlan: lan0
-  
+
 service:
   enabled: true
   httpApiPort: 80
