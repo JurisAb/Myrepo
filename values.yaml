@@ -44,7 +44,7 @@ service:
 
 pcap:
   image: travelping/pcap:0.3.1
-  imagePullPolicy: ifNotPresent
+  imagePullPolicy: IfNotPresent
   interface: acc0
   enabled: false
   filter: udp port 2123 or icmp
