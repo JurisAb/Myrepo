@@ -34,10 +34,49 @@ Per known destination (e.g. `198.18.3.10`)
 
 ## Alerts
 
-Per path:
+### vEPC (socket irx_1 )
 
-- `path_irx_1_198_18_3_10_contexts_v1 == 0`
-- `path_irx_1_198_18_3_10_contexts_v2 == 0`
+Context:
+- contexts v1 == 0 on GPC instance  --> Warning
+- contexts v2 == 0 on GPC instance  --> Warning
+- contexts v2 == 0 overall  --> Alert
+- contexts v2 == 0 overall  --> Alert
 
-- `path_irx_1_198_18_3_10_tx_v1_echo_request_timeout` > 0
-- `path_irx_1_198_18_3_10_tx_v2_echo_request_timeout` > 0
+Paths:
+- No GTP Echo response v1 received from peer since 2m  --> Warning
+- No GTP Echo response v2 received from peer since 2m  --> Warning
+- No GTP Echo response v1 received at all since 2m  --> Alert
+- No GTP Echo response v2 received at all since 2m  --> Alert
+
+Messages:
+- tx retransmits  > 5 in last 2m --> Warning
+- tx timeouts > 5 in last 2m --> Alert
+- rx duplicates > 5 in last 2m --> Warning
+
+
+timeout, error
+
+### MNO (socket irx_0 )
+
+Context:
+- contexts v1 == 0 on GPC instance  --> Warning
+- contexts v2 == 0 on GPC instance  --> Warning
+- contexts v2 == 0 overall  --> Alert
+- contexts v2 == 0 overall  --> Alert
+
+Paths
+- No GTP Echo response v1 received at all since 2m  --> Alert
+- No GTP Echo response v2 received at all since 2m  --> Alert
+
+Messages:
+- tx retransmits  > 5 in last 2m --> Warning
+- tx timeouts > 5 in last 2m --> Alert
+- rx duplicates > 5 in last 2m --> Warning
+
+### Sanity Check
+
+Context:
+- contexts v1 MNO !=  contexts v1 vEPC  --> Warning
+- contexts v2 MNO !=  contexts v2 vEPC  --> Warning
+
+
