@@ -61,7 +61,7 @@ timeout, error
 Context:
 - contexts v1 == 0 on GPC instance  --> Warning
 - contexts v2 == 0 on GPC instance  --> Warning
-- contexts v2 == 0 overall  --> Alert
+- contexts v1 == 0 overall  --> Alert
 - contexts v2 == 0 overall  --> Alert
 
 Paths
