@@ -37,10 +37,10 @@ spec:
         resources:
           requests:
             cpu: "10m"
-            memory: "25Mi"
+            memory: "10Mi"
           limits:
             cpu: "20m"
-            memory: "50Mi"
+            memory: "15Mi"
       {{- end }}
       - name: init-config
         image: travelping/nettools
@@ -84,10 +84,10 @@ spec:
         resources:
           requests:
             cpu: "10m"
-            memory: "25Mi"
+            memory: "10Mi"
           limits:
             cpu: "20m"
-            memory: "50Mi"
+            memory: "15Mi"
       containers:
       {{- if .Values.vxlanController.enabled }}
         - name: vxlan-controller-agent
@@ -124,10 +124,10 @@ spec:
           resources:
             requests:
               cpu: "100m"
-              memory: "50Mi"
+              memory: "80Mi"
             limits:
-              cpu: "200m"
-              memory: "200Mi"
+              cpu: "150m"
+              memory: "150Mi"
         - name: ergw-c-node
           image: "{{ .Values.cpNode.image }}"
           imagePullPolicy: "{{ .Values.cpNode.imagePullPolicy }}"

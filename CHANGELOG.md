@@ -1,3 +1,15 @@
+## Chart 1.2.5 / App 1.2.5
+
+### Operational Changes
+Adds resource limits to the containers
+
+### ergw-gtp-c-node
+v1.18.2 => v1.18.3
+
+Fix cache expire logic.
+
+Adjust GC and hibernation for session processes
+
 ## Chart 1.2.1 / App 1.2.1
 
 ### Operational Changes
