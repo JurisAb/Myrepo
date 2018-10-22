@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.2.5"
 description: GTP Proxy
 name: gtp-proxy
-version: 1.2.5
+version: 1.2.6
