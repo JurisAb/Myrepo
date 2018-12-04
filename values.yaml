@@ -45,6 +45,27 @@ resources:
     limits:
       cpu: "150m"
       memory: "150Mi"
+  vxlanControllerAgent:
+    requests:
+      cpu: "10m"
+      memory: "32Mi"
+    limits:
+      cpu: "20m"
+      memory: "64Mi"
+  initIp:
+    requests:
+      cpu: "10m"
+      memory: "32Mi"
+    limits:
+      cpu: "20m"
+      memory: "64Mi"
+  pcap:
+    requests:
+      cpu: 150m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
 
 logLevel: debug
 

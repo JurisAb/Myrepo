@@ -3,6 +3,7 @@
 ### Operational Changes
 Adds overridden resources limits and requests for ergw-c-node and ergw-u-edp.
 Reduce default limits for ergw-c-node.
+Adds resources limits and requests for containers - pcap, init-config, vxlanControllerAgent.
 
 ## Chart 1.2.5 / App 1.2.5
 
