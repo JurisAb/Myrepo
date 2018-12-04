@@ -1,7 +1,14 @@
+## Chart 1.2.6 / App 1.2.6
+
+### Operational Changes
+Adds overridden resources limits and requests for ergw-c-node and ergw-u-edp.
+Reduce default limits for ergw-c-node.
+Adds resources limits and requests for containers - pcap, init-config, vxlanControllerAgent.
+
 ## Chart 1.2.5 / App 1.2.5
 
 ### Operational Changes
-Adds resource limits to the containers
+Adds resource limits to the containers.
 
 ### ergw-gtp-c-node
 v1.18.2 => v1.18.3

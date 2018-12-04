@@ -30,6 +30,43 @@ dpNode:
   image: ergw/ergw-gtp-u-edp:1.6.0
   imagePullPolicy: Always
 
+resources:
+  cpNode:
+    requests:
+      cpu: "100m"
+      memory: "200Mi"
+    limits:
+      cpu: "300m"
+      memory: "500Mi"
+  dpNode:
+    requests:
+      cpu: "100m"
+      memory: "80Mi"
+    limits:
+      cpu: "150m"
+      memory: "150Mi"
+  vxlanControllerAgent:
+    requests:
+      cpu: "10m"
+      memory: "32Mi"
+    limits:
+      cpu: "20m"
+      memory: "64Mi"
+  initIp:
+    requests:
+      cpu: "10m"
+      memory: "32Mi"
+    limits:
+      cpu: "20m"
+      memory: "64Mi"
+  pcap:
+    requests:
+      cpu: 150m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
 logLevel: debug
 
 vxlanController:
