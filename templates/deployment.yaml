@@ -87,7 +87,7 @@ spec:
               add:
               - NET_ADMIN
           resources:
-{{ toYaml .Values.resources.vxlanControllerAgent | trim | indent 10 }}
+{{ toYaml .Values.resources.vxlanControllerAgent | trim | indent 12 }}
       {{- end }}
       {{- if .Values.pcap.enabled }}
         - name: pcap
@@ -103,7 +103,7 @@ spec:
           - name: MAXEFILENUM
             value: "{{ .Values.pcap.maxfilenum }}"
           resources:
-{{ toYaml .Values.resources.pcap | trim | indent 10 }}
+{{ toYaml .Values.resources.pcap | trim | indent 12 }}
       {{- end }}
         - name: ergw-u-edp
           image: "{{ .Values.dpNode.image }}"
