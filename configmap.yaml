@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "gtp-proxy.fullname" . }}
+  labels:
+    app: {{ template "gtp-proxy.name" . }}
+    chart: {{ template "gtp-proxy.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  ergw-gtp-u-edp.config: |
+    [{setup, [{data_dir, "/var/lib/ergw"},
+              {log_dir,  "/var/log/gtp-u-node"}                             %% NOTE: lager is not using this
+             ]},
+
+     {gtp_u_edp, [
+                  {sockets, [{'grx-0', [{ip, {{ splitList "/" .Values.access.ipAddr | first | include "to.erlang.ip" -}} },
+                                        {netdev, "acc0"},
+                                        freebind
+                                       ]},
+                             {'grx-1', [{ip, {{ splitList "/" .Values.core.ipAddr | first | include "to.erlang.ip" -}} },
+                                        {netdev, "core0"},
+                                        freebind
+                                       ]}
+                            ]}
+                 ]},
+
+     {lager, [
+        {colored, true},
+        {log_root, "/var/log/gtp-u-node "},
+        {error_logger_redirect, true},
+        {crash_log, "crash.log"},
+        {handlers, [
+              {lager_console_backend, {{ .Values.logLevel }}}
+             ]}
+       ]}
+    ].
+
+
+  ergw-gtp-c-node.config: |
+    [
+     {setup, [{data_dir, "/var/lib/ergw"},
+              {log_dir,  "/var/log/gtphub-c-node"}                             %% NOTE: lager is not using this
+             ]},
+
+     {'ergw-gtp-c-node', []},
+
+     {ergw, [
+             {sockets,
+              [{'irx-0', [{type, 'gtp-c'},
+                          {ip, {{ splitList "/" .Values.access.ipAddr | first | include "to.erlang.ip" -}} },
+                          {netdev, "acc0"},
+                          freebind
+                         ]},
+               {'grx-0', [{type, 'gtp-u'},
+                          {node, 'ergw-gtp-u-edp@{{ template "gtp-proxy.fullname" . }}'},
+                          {name, 'grx-0'}
+                         ]},
+               {'irx-1', [{type, 'gtp-c'},
+                          {ip, {{ splitList "/" .Values.core.ipAddr | first | include "to.erlang.ip" -}} },
+                          {netdev, "core0"},
+                          freebind
+                         ]},
+               {'grx-1', [{type, 'gtp-u'},
+                          {node, 'ergw-gtp-u-edp@{{ template "gtp-proxy.fullname" . }}'},
+                          {name, 'grx-1'}
+                         ]}
+
+              ]},
+
+             {proxy_lb_type, {{ .Values.pgw.lbAlgorithm }}},
+
+             {http_api, [{port, {{ .Values.httpApi.port }}}, {ip, {{template "to.erlang.ip" .Values.httpApi.ipAddr }}}]},
+
+             {handlers,
+              [{h1,   [{handler, pgw_s5s8_proxy},
+                       {protocol, gn},
+                       {sockets, ['irx-0']},
+                       {data_paths, ['grx-0']},
+                       {proxy_sockets, ['irx-1']},
+                       {proxy_data_paths, ['grx-1']},
+                       {{- if kindIs "string" .Values.pgw.ipAddr }}
+                       {pgw, {{ template "to.erlang.ip" .Values.pgw.ipAddr }}}
+                       {{- else }}
+                       {pgw, {{ template "to.erlang.ip_list" .Values.pgw.ipAddr }}}
+                       {{- end}}
+                      ]},
+               {h2, [{handler, pgw_s5s8_proxy},
+                       {protocol, s5s8},
+                       {sockets, ['irx-0']},
+                       {data_paths, ['grx-0']},
+                       {proxy_sockets, ['irx-1']},
+                       {proxy_data_paths, ['grx-1']},
+                       {{- if kindIs "string" .Values.pgw.ipAddr }}
+                       {pgw, {{ template "to.erlang.ip" .Values.pgw.ipAddr }}}
+                       {{- else }}
+                       {pgw, {{ template "to.erlang.ip_list" .Values.pgw.ipAddr }}}
+                       {{- end}}
+                      ]}
+              ]}
+            ]},
+
+     {ergw_aaa, [
+                 {ergw_aaa_provider, {ergw_aaa_mock, [{shared_secret, <<"MySecret">>}]}}
+                ]},
+
+
+     {jobs, [{queues,
+              [{path_restart, [{standard_counter, 100}]},
+               {create, [{standard_rate, 100}, {max_size, 10}]},
+               {delete, [{standard_counter, 100}]},
+               {other, [{standard_rate, 100}, {max_size, 10}]}
+              ]}
+            ]},
+
+
+     {lager, [
+              {log_root, "/var/log/gtphub-c-node"},
+              {error_logger_redirect, true},
+              {colored, true},
+              {crash_log, "crash.log"},
+              {handlers, [
+                          {lager_console_backend, {{ .Values.logLevel }}}
+                         ]}
+             ]}
+    ].

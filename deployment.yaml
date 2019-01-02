@@ -1,0 +1,159 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "gtp-proxy.fullname" . }}
+  labels:
+    app: {{ template "gtp-proxy.name" . }}
+    chart: {{ template "gtp-proxy.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "gtp-proxy.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "gtp-proxy.name" . }}
+        release: {{ .Release.Name }}
+        {{- if .Values.vxlanController.enabled }}
+        vxlan: "true"
+        {{- end }}
+      annotations:
+        {{- if .Values.vxlanController.enabled }}
+        vxlan.travelping.com/names: {{ .Values.vxlanController.vxlan }}
+        {{- end }}
+    spec:
+      hostname: {{ template "gtp-proxy.fullname" . }}
+      initContainers:
+      {{- if .Values.vxlanController.enabled }}
+      - name: vxlan-controller-agent-init
+        image: aialferov/kube-vxlan-controller-agent:2.1.0
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        resources:
+{{ toYaml .Values.resources.vxlanControllerAgent | trim | indent 10 }}
+      {{- end }}
+      - name: init-config
+        image: travelping/nettools
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          echo "Pre Initializing..."
+          set -xe
+
+          {{- range .Values.preInitConfig }}
+          {{ . }}
+          {{- end }}
+
+          echo "Initializing..."
+          ip l add acc0 type vrf table 10
+          ip l set acc0 up
+          ip ru add oif acc0 table 10
+          ip ru add iif acc0 table 10
+          ip l set dev {{ .Values.access.interface }} master acc0
+          ip a add {{ .Values.access.ipAddr }} dev {{ .Values.access.interface }}
+          ip r add table 10 default via {{ .Values.access.gateway }}
+
+          ip l add core0 type vrf table 20
+          ip l set core0 up
+          ip ru add oif core0 table 20
+          ip ru add iif core0 table 20
+          ip l set dev {{ .Values.core.interface }} master core0
+          ip a add {{ .Values.core.ipAddr }} dev {{ .Values.core.interface }}
+          ip r add table 20 default via {{ .Values.core.gateway }}
+
+          echo "Additional config..."
+
+          {{- range .Values.postInitConfig }}
+          {{ . }}
+          {{- end }}
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        resources:
+{{ toYaml .Values.resources.initIp | trim | indent 10 }}
+      containers:
+      {{- if .Values.vxlanController.enabled }}
+        - name: vxlan-controller-agent
+          image: aialferov/kube-vxlan-controller-agent:2.1.0
+          securityContext:
+            capabilities:
+              add:
+              - NET_ADMIN
+          resources:
+{{ toYaml .Values.resources.vxlanControllerAgent | trim | indent 12 }}
+      {{- end }}
+      {{- if .Values.pcap.enabled }}
+        - name: pcap
+          image: "{{ .Values.pcap.image }}"
+          imagePullPolicy: "{{ .Values.pcap.imagePullPolicy }}"
+          env:
+          - name: FILTER
+            value: "{{ .Values.pcap.filter }}"
+          - name: IFACE
+            value: "{{ .Values.pcap.interface }}"
+          - name: MAXFILESIZE
+            value: "{{ .Values.pcap.maxfilesize }}"
+          - name: MAXEFILENUM
+            value: "{{ .Values.pcap.maxfilenum }}"
+          resources:
+{{ toYaml .Values.resources.pcap | trim | indent 12 }}
+      {{- end }}
+        - name: ergw-u-edp
+          image: "{{ .Values.dpNode.image }}"
+          imagePullPolicy: "{{ .Values.dpNode.imagePullPolicy }}"
+          volumeMounts:
+          - name: gtp-u-edp-config
+            mountPath: /etc/ergw-gtp-u-edp/
+          {{- with .Values.dpNode.env }}
+          env:
+{{ toYaml . | indent 10 }}
+          {{- end }}
+          resources:
+{{ toYaml .Values.resources.dpNode | trim | indent 12 }}
+        - name: ergw-c-node
+          image: "{{ .Values.cpNode.image }}"
+          imagePullPolicy: "{{ .Values.cpNode.imagePullPolicy }}"
+          volumeMounts:
+          - name: gtp-c-node-config
+            mountPath: /etc/ergw-gtp-c-node/
+          ports:
+            - containerPort: {{ .Values.httpApi.port }}
+              name: http
+          {{- with .Values.cpNode.env }}
+          env:
+{{ toYaml . | trim | indent 10 }}
+          {{- end }}
+          resources:
+{{ toYaml .Values.resources.cpNode | trim | indent 12 }}
+      volumes:
+      - name: gtp-u-edp-config
+        configMap:
+          name: {{ template "gtp-proxy.fullname" . }}
+          items:
+          - key: ergw-gtp-u-edp.config
+            path: ergw-gtp-u-edp.config
+      - name: gtp-c-node-config
+        configMap:
+          name: {{ template "gtp-proxy.fullname" . }}
+          items:
+          - key: ergw-gtp-c-node.config
+            path: ergw-gtp-c-node.config
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
